@@ -20,5 +20,5 @@ public class Merchant extends MainTable {
     private String address;
 
     @DynamoDBAttribute(attributeName = "merchantType")
-    private MerchantType merchantType;
+    private String merchantType;
 }

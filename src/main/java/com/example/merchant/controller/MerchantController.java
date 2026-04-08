@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping ("/api/merchant")
 @RestController
@@ -19,15 +21,31 @@ public class MerchantController {
         merchantService.saveMerchant(dto);
     }
 
-    @GetMapping("/find/{id}")
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.OK)
-    public MerchantDTO findById(@PathVariable String id, @RequestParam String address) {
+    public void updateMerchant(@RequestBody MerchantDTO dto){
+        merchantService.updateMerchant(dto);
+    }
+
+    @DeleteMapping("/delete")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMerchant(@RequestParam String id, @RequestParam String address){
+        merchantService.deleteMerchant(id, address);
+    }
+
+    @GetMapping("/findAll")
+    public List<MerchantDTO> findAll(){
+        return merchantService.findAll();
+    }
+
+    @GetMapping("/find")
+    @ResponseStatus(HttpStatus.OK)
+    public MerchantDTO findById(@RequestParam String id, @RequestParam String address) {
         return merchantService.findById(id, address);
     }
 
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void updateMerchant(@RequestBody MerchantDTO dto, @PathVariable String id){
-        merchantService.updateMerchant(dto, id);
+    @GetMapping("/findByName/{name}")
+    public List<MerchantDTO> findByName(@PathVariable String name){
+        return merchantService.findByName(name);
     }
 }

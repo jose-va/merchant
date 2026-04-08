@@ -8,6 +8,5 @@ import org.mapstruct.Mapper;
 public interface MerchantMapper {
 
     MerchantDTO toDto(Merchant merchant);
-
     Merchant toEntity(MerchantDTO merchantDTO);
 }
