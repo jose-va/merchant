@@ -7,45 +7,50 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RequiredArgsConstructor
-@RequestMapping ("/api/merchant")
+@RequestMapping("/api/merchant")
 @RestController
 public class MerchantController {
 
     private final MerchantService merchantService;
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void createMerchant(@RequestBody MerchantDTO dto) {
         merchantService.saveMerchant(dto);
     }
 
     @PutMapping("/update")
     @ResponseStatus(HttpStatus.OK)
-    public void updateMerchant(@RequestBody MerchantDTO dto){
+    public void updateMerchant(@RequestBody MerchantDTO dto) {
         merchantService.updateMerchant(dto);
     }
 
-    @DeleteMapping("/delete")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteMerchant(@RequestParam String id, @RequestParam String address){
-        merchantService.deleteMerchant(id, address);
-    }
-
-    @GetMapping("/findAll")
-    public List<MerchantDTO> findAll(){
+    @GetMapping("/all")
+    public List<MerchantDTO> findAll() {
         return merchantService.findAll();
     }
 
-    @GetMapping("/find")
+    @GetMapping("/find/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public MerchantDTO findById(@RequestParam String id, @RequestParam String address) {
-        return merchantService.findById(id, address);
+    public List<MerchantDTO> findById(@PathVariable String id) {
+        return merchantService.findById(id);
     }
 
-    @GetMapping("/findByName/{name}")
-    public List<MerchantDTO> findByName(@PathVariable String name){
+    @GetMapping("/search/name")
+    public List<MerchantDTO> findByName(@RequestParam String name) {
         return merchantService.findByName(name);
+    }
+
+    @GetMapping("/search/client")
+    @ResponseStatus(HttpStatus.OK)
+    public List<MerchantDTO> findByClientId(@RequestParam String clientId) {
+        return merchantService.findByClientId(clientId);
+    }
+
+    @DeleteMapping("/delete/{id}/{clientId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMerchant(@PathVariable String id, @PathVariable String clientId) {
+        merchantService.deleteMerchant(id, clientId);
     }
 }

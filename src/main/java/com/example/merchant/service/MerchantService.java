@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -24,15 +25,13 @@ public class MerchantService {
                 .toList();
     }
 
-    public MerchantDTO findById(String id, String address) {
+    public List<MerchantDTO> findById(String id) {
 
-        String pk = "MERCHANT#" + id;
-        String sk = "ADDRESS#" + address;
-
-        Merchant merchant = merchantRepository.findById(pk, sk);
-        if (merchant == null) throw new RuntimeException("Comerciante no encontrado");
-
-        return merchantMapper.toDto(merchant);
+        return merchantRepository.findAll()
+                .stream()
+                .filter(m -> m.getId().toLowerCase().contains(id.toLowerCase()))
+                .map(merchantMapper::toDto)
+                .toList();
     }
 
     public List<MerchantDTO> findByName(String name) {
@@ -43,14 +42,21 @@ public class MerchantService {
                 .toList();
     }
 
+    public List<MerchantDTO> findByClientId(String clientId) {
+        return merchantRepository.findAll()
+                .stream()
+                .filter(m -> m.getSk().equals("CLIENT#" + clientId))
+                .map(merchantMapper::toDto)
+                .toList();
+    }
+
     public void saveMerchant(MerchantDTO dto) {
         Merchant merchant = merchantMapper.toEntity(dto);
 
         merchant.setId(UUID.randomUUID().toString());
         merchant.setPk("MERCHANT#" + merchant.getId());
-        merchant.setSk("ADDRESS#" + merchant.getAddress());
+        merchant.setSk("CLIENT#" + merchant.getClientId());
         merchant.setGIndex1Pk("STATUS#OPERATIVE");
-        merchant.setGIndex2Pk("TYPE#" + merchant.getMerchantType());
 
         merchantRepository.save(merchant);
     }
@@ -60,21 +66,18 @@ public class MerchantService {
         Merchant updatedMerchant = merchantMapper.toEntity(dto);
 
         updatedMerchant.setPk("MERCHANT#" + updatedMerchant.getId());
-        updatedMerchant.setSk("ADDRESS#" + updatedMerchant.getAddress());
+        updatedMerchant.setSk("CLIENT#" + updatedMerchant.getClientId());
         updatedMerchant.setGIndex1Pk("STATUS#OPERATIVE");
-        updatedMerchant.setGIndex2Pk("TYPE#" + updatedMerchant.getMerchantType());
 
         merchantRepository.save(updatedMerchant);
     }
 
-    public void deleteMerchant(String id, String address) {
+    public void deleteMerchant(String id, String clientId) {
         String pk = "MERCHANT#" + id;
-        String sk = "ADDRESS#" + address;
+        String sk = "ADDRESS#" + clientId;
 
         Merchant merchant = merchantRepository.findById(pk, sk);
 
         merchantRepository.delete(merchant);
     }
-
-
 }
